@@ -8,7 +8,7 @@ function connectDB(){
 
 const urlSchema=new mongoose.Schema({
 
-    url: {
+    original_url: {
         type: String,
         required:true
     },

@@ -31,13 +31,13 @@ app.post('/api/shorturl',(req,res,next)=>{
 urlModel.count().then(newUrl=> {
 
   let url = new urlModel({
-    url:req.body.url,
+    original_url:req.body.url,
     short_url:newUrl+1})
 
     url.save();
 
     res.json({
-      url: url.url,
+      original_url: url.original_url,
       short_url: url.short_url
     })
   });
