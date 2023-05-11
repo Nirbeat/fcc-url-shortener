@@ -3,7 +3,8 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 const dns = require('dns');
-const { connectDB } = require('./database');
+const { connectDB, urlModel } = require('./database');
+
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -19,14 +20,18 @@ app.get('/', function(req, res) {
   
 });
 
-
 app.use(bodyParser.urlencoded({extended:false}));
 
 app.post('/api/shorturl',(req,res,next)=>{
 
+  let model=urlModel()
+  
+  let url = new model({
+    url:"",
+    short_url:1})
 
-  console.log(req.body.url)
-
+    // res.send(req.body.url)
+    console.log(url)
 });
 
 
