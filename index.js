@@ -28,10 +28,11 @@ app.post('/api/shorturl',(req,res,next)=>{
 
   // })
 
-  // console.log(model.length)
+urlModel.count().then(newUrl=> {
+
   let url = new urlModel({
     url:req.body.url,
-    short_url:1})
+    short_url:newUrl+1})
 
     url.save();
 
@@ -39,6 +40,10 @@ app.post('/api/shorturl',(req,res,next)=>{
       url: url.url,
       short_url: url.short_url
     })
+  });
+
+// console.log(ca)
+
 
 });
 
