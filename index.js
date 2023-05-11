@@ -24,16 +24,23 @@ app.use(bodyParser.urlencoded({extended:false}));
 
 app.post('/api/shorturl',(req,res,next)=>{
 
-  let model=urlModel()
-  
-  let url = new model({
-    url:"",
+  // dns.lookup(req.body.url,(err,address)=>{
+
+  // })
+
+  // console.log(model.length)
+  let url = new urlModel({
+    url:req.body.url,
     short_url:1})
 
-    // res.send(req.body.url)
-    console.log(url)
-});
+    url.save();
 
+    res.json({
+      url: url.url,
+      short_url: url.short_url
+    })
+
+});
 
 app.get('/api/shorturl/:url',(req,res,next)=>{
 

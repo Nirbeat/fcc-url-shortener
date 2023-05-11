@@ -6,26 +6,18 @@ function connectDB(){
     mongoose.connect(DB,{useNewUrlParser:true,useUnifiedTopology:true});
 }
 
-function urlSchema(){
+const urlSchema=new mongoose.Schema({
 
-    const urlSchema=new mongoose.Schema({
+    url: {
+        type: String,
+        required:true
+    },
+    short_url:{
+        type: Number,
+        required: true
+    }
+});
 
-        url: {
-            type: String,
-            required:true
-        },
-        short_url:{
-            type: Number,
-            required: true
-        }
-    });
-
-    return urlSchema;
-}
-
-function urlModel(){
-
-    return mongoose.model("url",urlSchema())
-}
+const urlModel= mongoose.model("url",urlSchema)
 
 module.exports={connectDB, urlModel}
