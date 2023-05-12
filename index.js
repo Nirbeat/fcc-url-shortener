@@ -26,7 +26,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/api/shorturl', (req, res, next) => {
   
-  if(req.body.url===""||!req.body.url.startsWith("http://"||!req.body.url.startsWith("https://"))){
+  if(req.body.url===""||
+  !req.body.url.startsWith("http")){
     res.json({
       error: 'invalid url'
     })
