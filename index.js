@@ -26,39 +26,36 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/api/shorturl', (req, res, next) => {
   
-  // if(req.body.url===""||!req.body.url.startsWith("https://")){
-  //   res.json({
-  //     instancia : "mal formato",
-  //     error: 'invalid url'
-  //   })
-  // }else{
-    dns.lookup(req.body.url, (err,address,family) => {
+  if(req.body.url===""||!req.body.url.startsWith("http://"||!req.body.url.startsWith("https://"))){
+    res.json({
+      error: 'invalid url'
+    })
+  }else{
+    let url=req.body.url.slice(req.body.url.indexOf("w"));
+    dns.lookup(url, (err,address,family) => {
       if (err) {
         res.json({
-          errMess: err.message,
-          url : req.body.url,
-          instancia : "no existe",
           error: 'invalid url'
         })
       } else {
-        urlModel.count().then(newUrl => {
+        urlModel.count().then(count => {
   
-          let url = new urlModel({
-            original_url: `https://${req.body.url}`,
-            short_url: newUrl + 1
+          let urlToSave = new urlModel({
+            original_url: req.body.url,
+            short_url: count + 1
           })
   
-          url.save();
+          urlToSave.save();
   
           res.json({
-            original_url: url.original_url,
-            short_url: url.short_url
+            original_url: urlToSave.original_url,
+            short_url: urlToSave.short_url
           })
         });
       }
     }
     )
-  // }
+  }
 });
 
 app.get('/api/shorturl/:url', (req, res, next) => {
