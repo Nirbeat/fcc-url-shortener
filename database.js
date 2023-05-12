@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const DB = process.env.DB
 
 function connectDB(){
-    mongoose.connect(DB,{useNewUrlParser:true,useUnifiedTopology:true});
+    mongoose.connect("mongodb+srv://nirbeat:33enelRefugio@cluster0.au0dubh.mongodb.net/",{useNewUrlParser:true,useUnifiedTopology:true});
 }
 
 const urlSchema=new mongoose.Schema({
