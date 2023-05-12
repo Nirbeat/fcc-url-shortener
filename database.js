@@ -20,4 +20,9 @@ const urlSchema=new mongoose.Schema({
 
 const urlModel= mongoose.model("url",urlSchema)
 
-module.exports={connectDB, urlModel}
+async function findUrlToRedirect(requestedUrl){
+
+    return await urlModel.findOne({short_url:requestedUrl});
+}
+
+module.exports={connectDB, urlModel, findUrlToRedirect}

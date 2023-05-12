@@ -3,7 +3,8 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 const dns = require('dns');
-const { connectDB, urlModel } = require('./database');
+const { connectDB, urlModel, findUrlToRedirect } = require('./database');
+const { validateUrl} = require('./validateUrl');
 
 
 // Basic Configuration
@@ -15,44 +16,58 @@ app.use('/public', express.static(`${process.cwd()}/public`));
 
 connectDB()
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
+
+});
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.post('/api/shorturl', (req, res, next) => {
   
-});
-
-app.use(bodyParser.urlencoded({extended:false}));
-
-app.post('/api/shorturl',(req,res,next)=>{
-
-  // dns.lookup(req.body.url,(err,address)=>{
-
-  // })
-
-urlModel.count().then(newUrl=> {
-
-  let url = new urlModel({
-    original_url:req.body.url,
-    short_url:newUrl+1})
-
-    url.save();
-
+  if(req.body.url===""||!req.body.url.startsWith("https://")){
     res.json({
-      original_url: url.original_url,
-      short_url: url.short_url
+      error: 'invalid url'
     })
-  });
+  }else{
+    dns.lookup(req.body.url.slice(req.body.url.indexOf("w")), (err,address,family) => {
+      if (err) {
+        res.json({
+          error: 'invalid url'
+        })
+      } else {
+        urlModel.count().then(newUrl => {
+  
+          let url = new urlModel({
+            original_url: req.body.url,
+            short_url: newUrl + 1
+          })
+  
+          url.save();
+  
+          res.json({
+            original_url: url.original_url,
+            short_url: url.short_url
+          })
+        });
+      }
+    })
+  }
 
-// console.log(ca)
+  
 
+  
 
 });
 
-app.get('/api/shorturl/:url',(req,res,next)=>{
+app.get('/api/shorturl/:url', (req, res, next) => {
 
-
+  findUrlToRedirect(req.params.url).then(url => {
+    return url.original_url
+  }).then(url=>res.status(301).redirect(`http://${url}`))
 });
 
 
-app.listen(port, function() {
+app.listen(port, function () {
   console.log(`Listening on port ${port}`);
 });
