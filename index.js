@@ -65,7 +65,7 @@ app.get('/api/shorturl/:url', (req, res, next) => {
 
   findUrlToRedirect(req.params.url).then(url => {
     return url.original_url
-  }).then(url=>res.status(301).redirect(`http://${url}`))
+  }).then(url=>res.status(301).redirect(`https://${url}`))
 });
 
 
