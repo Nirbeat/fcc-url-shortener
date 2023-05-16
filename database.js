@@ -13,16 +13,11 @@ const urlSchema=new mongoose.Schema({
         required:true
     },
     short_url:{
-        type: Number,
+        type: String,
         required: true
     }
 });
 
 const urlModel= mongoose.model("url",urlSchema)
 
-async function findUrlToRedirect(requestedUrl){
-
-    return await urlModel.findOne({short_url:requestedUrl});
-}
-
-module.exports={connectDB, urlModel, findUrlToRedirect}
+module.exports={connectDB, urlModel}
