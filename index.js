@@ -21,11 +21,10 @@ app.get('/', function (req, res) {
 
 });
 
-app.get('/api/shorturl/:url', (req, res, next) => {
+app.get('/api/shorturl/:short_url', (req, res, next) => {
 
-  urlModel.findOne({ short_url: req.params.url })
+  urlModel.findOne({ short_url: req.params.short_url })
     .then(url => {
-      // console.log(url.original_url)
       res.status(301).redirect(url.original_url)
     })
 });
@@ -36,34 +35,36 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/api/shorturl', (req, res, next) => {
 
-  const url = req.body.url.slice(req.body.url.indexOf("w"))
+  //ANALIZAR QUE ESTA PASANDO CON EL FETCH DEL FRONTEND DE FCC
+  const url = req.body.url;
 
-  if (req.body.url.startsWith("https://www.") ||
-    req.body.url.startsWith("http://www.")) {
+  if (url.startsWith("https://") ||
+    url.startsWith("http://")) {
 
     urlModel.count().then(count => {
       let urlToSave = new urlModel({
-        original_url: req.body.url,
+        original_url: url,
         short_url: (count + 1).toString()
       })
-      // return urlToSave
+      return urlToSave
 
-    // }).then(urlToSave=>{
-    //   let queryUrl= urlToSave.original_url.slice(urlToSave.original_url.indexOf("w"));
+    }).then(urlToSave => {
 
-      // dns.lookup(queryUrl,(err,address,family)=>{
-      //   if(!err){
+      let queryUrl = new URL(url);
+
+      dns.lookup(queryUrl.hostname, (err, address, family) => {
+        if (!err) {
           urlToSave.save();
           res.json({
             original_url: urlToSave.original_url,
             short_url: parseInt(urlToSave.short_url)
           })
-  //       }else {
-  //         res.json({
-  //           error: 'invalid url'
-  //         })
-  //       }
-  //     })
+        } else {
+          res.json({
+            error: 'invalid url'
+          })
+        }
+      })
     })
   }
   else {
